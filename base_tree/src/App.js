@@ -1,5 +1,34 @@
 import './App.css';
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useReducer} from "react";
+
+// useReducer
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_USER': {
+            return action.payload
+        }
+        case 'CHANGE_USER_NAME': {
+            return {
+                ...state,
+                name : action.payload
+            }
+        }
+        case 'CHANGE_USER_ID': {
+            return {
+                ...state,
+                id : state.id + 1
+            }
+        }
+        default: {
+            return state
+        }
+    }
+}
+const initialState = {
+    id : null,
+    name : ''
+}
+// useReducer
 
 export default function App() {
     const [count, setCount] = useState(1);
@@ -16,6 +45,11 @@ export default function App() {
             .then(value => value.json())
             .then(value => setUser(value))
     }, [count])
+
+
+    // useReducer
+    const [state, dispatch] = useReducer(reducer, initialState);
+    // useReducer
 
     return (
         <div>
