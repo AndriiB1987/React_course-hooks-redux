@@ -3,19 +3,13 @@ import './App.css';
 import React, {useEffect, useState} from "react";
 export default function App() {
     const [count, setCounter] = useState(1);  
-    // let [item, setItem] = useState({name:'user'});
-    const [users, setUser] = useState({name:""});
+    const [users, setUser] = useState();
     let [posts, setPost] = useState();
     let [comments, setComment] = useState();
 
-    
-    //  const incrementCounter = () => setCounter((prev) => prev + 1);
     const chooseItemUser = (e)=>{
         e.preventDefault();
-        setUser((prevState)=>({
-            ...prevState,
-             name: prevState.name='choose new user'
-        }));
+        setUser();
     }
 
     let chooseItemPost = (e)=>{
@@ -30,7 +24,7 @@ export default function App() {
 
     let counterInc = (e)=>{
         e.preventDefault();
-    setCounter(currentValue=>currentValue<500 ? currentValue+1:currentValue);
+    setCounter(currentValue=>currentValue<10 ? currentValue+1:currentValue);
     }
     let counterDec = (e)=>{
         e.preventDefault();
@@ -43,6 +37,7 @@ export default function App() {
         fetch(`https://jsonplaceholder.typicode.com/users/${count}`)
             .then(value => value.json())
             .then(value => setUser(value))
+            
     }, [count])
     useEffect(() => {
         fetch(`https://jsonplaceholder.typicode.com/posts/${count}`)
@@ -57,7 +52,7 @@ export default function App() {
  let myMaxValue='';
     return (
         <div>
-             <div>
+            <div>
             <button onClick={chooseItemUser} value={users} onChange={({ target: { value } }) => setUser(value)}>exclude User</button>
             </div> 
             <div>
@@ -73,18 +68,18 @@ export default function App() {
             <button onClick={cleanCounter}>reset</button>
             </form>
             {!!users &&
-            (<div>
-                <p>{users.id} - {users.name} </p>
+            (<div>USER:
+                <p>{users.id} - {users.name} - {users.username} </p>
             </div>)
             }
             {!!posts &&
-            (<div>
+            (<div>POST:
                 <p>{posts.id} - {posts.title} </p>
             </div>)
             }
             {!!comments &&
-            (<div>
-                <p>{comments.id} - {comments.name} </p>
+            (<div>COMMENT:
+                <p>{comments.id} - {comments.name} - {comments.body} </p>
             </div>)
             }
         </div>
