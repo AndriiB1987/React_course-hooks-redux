@@ -1,67 +1,74 @@
-import './App.css';
-import React, {useEffect, useState, useReducer} from "react";
+import React, {useEffect, useReducer, useState} from "react";
+import "./App.css";
 
-// useReducer
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'SET_USER': {
-            return action.payload
+        case "SET_TODO": {
+            return action.payload;
         }
-        case 'CHANGE_USER_NAME': {
+        case "CHANGE_TODO_STATUS": {
             return {
                 ...state,
-                name : action.payload
-            }
+                completed: !state.completed
+            };
         }
-        case 'CHANGE_USER_ID': {
+        case "CHANGE_TODO_TITLE": {
             return {
                 ...state,
-                id : state.id + 1
-            }
+                title: action.payload
+            };
         }
         default: {
-            return state
+            console.error(`didn't found case for action:`, action);
+            return state;
         }
     }
-}
+};
+
 const initialState = {
-    id : null,
-    name : ''
-}
-// useReducer
+    userId: null,
+    id: null,
+    title: "",
+    completed: false
+};
 
 export default function App() {
-    const [count, setCount] = useState(1);
-    const [user, setUser] = useState();
-
-    const incrementCounter = () => setCount((prev) => prev + 1);
-    const decrementCounter = () => {
-        setCount((prev) => prev > 1 ? prev - 1 : prev)
-    }
-    const cleanCounter = () => setCount(1);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [counter, setCounter] = useState(1);
 
     useEffect(() => {
-        fetch(`https://jsonplaceholder.typicode.com/users/${count}`)
-            .then(value => value.json())
-            .then(value => setUser(value))
-    }, [count])
+        console.log("i was called");
+        fetch(`https://jsonplaceholder.typicode.com/todos/${counter}`)
+            .then((response) => response.json())
+            .then((json) => {
+                dispatch({ type: "SET_TODO", payload: json });
+            });
+    }, [counter]);
 
+    const onClickHandler = () => setCounter((prev) => prev + 1);
 
-    // useReducer
-    const [state, dispatch] = useReducer(reducer, initialState);
-    // useReducer
+    const onStatusChange = () => dispatch({ type: "CHANGE_TODO_STATUS" });
+
+    const onTitleChange = () =>
+        dispatch({
+            type: "CHANGE_TODO_TITLE",
+            payload: Math.random(100 - 10) * 100
+        });
 
     return (
-        <div>
-            <h1>Значення {count}</h1>
-            <button onClick={incrementCounter}>+</button>
-            <button onClick={decrementCounter}>-</button>
-            <button onClick={cleanCounter}>Очистити</button>
-            {!!user &&
-            (<div>
-                <p>{user.id} - {user.name} </p>
-            </div>)
-            }
+        <div className="App">
+            <button onClick={onClickHandler}>inc</button>
+            <button onClick={onStatusChange}>change todo status</button>
+            <button onClick={onTitleChange}>change todo title</button>
+
+            <h1>Counter value: {counter}</h1>
+            {!!state && (
+                <>
+                    <h2>{state.id}</h2>
+                    <h2>{state.title}</h2>
+                    <h2>{state.completed.toString()}</h2>
+                </>
+            )}
         </div>
     );
 }
