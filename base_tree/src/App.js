@@ -8,13 +8,12 @@ export default function App() {
     const user = useSelector(({user}) => user)
     const dispatch = useDispatch();
     useEffect(() => {
-        if(counter > 0 && counter < 10){
+        if(counter > 1 && counter < 10){
             fetch(`https://jsonplaceholder.typicode.com/users/${counter}`)
                 .then(value => value.json())
                 .then(value => dispatch({type: 'SET_USER', payload: value}))
         }
-
-    })
+  }, [counter,dispatch])
     return (
         <div>
             counter - {counter}
